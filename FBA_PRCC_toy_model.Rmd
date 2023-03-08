@@ -1,0 +1,393 @@
+---
+title: "FBA Sensitivity Analysis"
+author: "A. Sorokin"
+date: "`r format(Sys.time(), "%d.%m.%Y")`"
+output:
+  word_document: default
+  html_document: default
+  pdf_document:
+    keep_tex: yes
+    number_sections: yes
+params:
+  format: !r if(opts_knit$get("rmarkdown.pandoc.to") == 'html') c('screen', 'print') else 'print'
+header-includes:
+- \usepackage[T2A]{fontenc}
+- \usepackage[utf8]{inputenc}
+- \usepackage[english,russian]{babel}
+- \usepackage{grffile}
+- \usepackage{rotating}
+- \usepackage{caption}
+- \usepackage{longtable}
+- \usepackage{lscape}
+---
+```{r loadPackages, include=FALSE, cache=FALSE}
+## load additional packages in this chunk
+library(pander)
+library(knitr)
+library(data.table)
+library(ggplot2)
+library(xtable)
+library(tidyr)
+library(dplyr)
+library(openxlsx)
+library(sensitivity)
+library(acepack)
+library(boot)
+```
+
+```{r setup, include=FALSE, cache=FALSE}
+## This chunk should contain global configuration commands.
+## Use this to set knitr options and related things. Everything
+## in this chunk will be included in an appendix to document the
+## configuration used.
+#output <- opts_knit$get("rmarkdown.pandoc.to")
+knitr::opts_knit$set(stop_on_error = 2L)
+
+## By default R code is only included in HTML versions of the report
+## (where it can be collapsed). You can generate a PDF version
+## using rmarkdown::pdf_document to get a copy for print. Extensive
+## chunks of R code may or may not be desired in /hat setting. If you
+## want them simply change the following arguments to `echo = TRUE`.
+## In either case the default can be overwritten for individual chunks.
+#opts_chunk$set(echo = output=="html")
+#opts_chunk$set(warning = output=="html")
+#opts_chunk$set(message = output=="html")
+
+## Cache options
+knitr::opts_chunk$set(cache=TRUE,warning=FALSE)
+
+## Figure options
+## Set default figure format
+#options(reportmd.figure.format=params$format)
+
+## Set 'hide.fig.code' to FALSE to include code chunks that
+## produce Figures in the output. Note that this affects all chunks
+## that provide a figure caption.
+knitr::opts_chunk$set(hold=TRUE, hide.fig.code=FALSE)
+
+## Set up default plotting options for different formats.
+## These can be overwritten for individual chunks
+#interactiveFig()
+#screenFig()
+#printFig()
+
+## Pander options
+pander::panderOptions("digits", 3)
+pander::panderOptions("table.split.table", 160)
+#panderOptions("table.style", "grid")
+
+## Configure Figure and Table lables
+#options(figcap.prefix = "Figure", figcap.sep = ":", figcap.prefix.highlight = "**")
+#options(tabcap.prefix = "Table", tabcap.sep = ":", tabcap.prefix.highlight = "**")
+
+## Install required knitr hooks
+#installHooks()
+```
+
+```{r functions, include=FALSE}
+## Custom functions used in the analysis should go into this chunk.
+## They will be listed in their own section of the appendix.
+
+##==================== Functions ====================##
+aceOfBootstrap <-
+    function(x,
+             numOfBootSamp = ceiling(length(x[, 1]) / 2),
+             sampleSize = 35)
+    {
+        ## number of data points
+        N = length(x[, 1])
+        ## number of right hand side arguments
+        rhs <- length(x[1, ]) - 1
+        ## preallocate outout
+        phi <- array(data = 0, dim = c(sampleSize, rhs + 1))
+        xout <- array(data = 0, dim = c(sampleSize, rhs + 1))
+        ## here, bootstrap samples are drawn. Optimal transformations
+        ## are calculated and transformed for each boostrap sample.
+        ## Transformed optimal transformations are averaged.
+        for (i in c(1:numOfBootSamp))
+        {
+            ## bootstrap array x
+            template <- sample(c(1:N), sampleSize, replace = TRUE)
+            xBoot <- data.frame(x[template, ])
+            ## call ace and calculate optimal transformation
+            pp <- ace(xBoot[, 2:(rhs + 1)], xBoot[, 1])
+            ## sort output
+            ## first, rank and sort response
+            sty <- sort(pp$ty, index.return = TRUE)
+            pp$ty[sty$ix] = 1:sampleSize
+            pp$ty = pp$ty / sampleSize
+            sy <- sort(pp$y, index.return = TRUE)
+            pp$y <- 1:sampleSize
+            pp$y <- pp$y / sampleSize
+            pp$ty = pp$ty[sy$ix]
+            phi[, 1] = phi[, 1] + pp$ty
+            xout[, 1] = xout[, 1] + pp$y
+            ## second, rank and sort predictors
+            for (j in c(1:rhs))
+            {
+                ## rank and scale estimated optimal transformations
+                stx <- sort(pp$tx[, j], index.return = TRUE)
+                pp$tx[stx$ix, j] = 1:sampleSize
+                pp$tx[, j] = pp$tx[, j] / sampleSize
+                ## rank and scale corresponding x-values
+                sx <- sort(pp$x[j, ], index.return = TRUE)
+                pp$x[j, ] <- 1:sampleSize
+                pp$x[j, ] <- (pp$x[j, ]) / sampleSize
+                pp$tx[, j] = pp$tx[sx$ix, j]
+                ## average transformed optimal transformations
+                phi[, j + 1] = phi[, j + 1] + pp$tx[, j]
+                
+                xout[, j + 1] = xout[, j + 1] + pp$x[j, ]
+            }
+        }
+        ## Output
+        phi <- phi / numOfBootSamp
+        xout <- xout / numOfBootSamp
+        erg <- NULL
+        erg$x <- xout
+        erg$phi <- phi
+        erg
+    }
+
+#' PRCC significance
+#' 
+#' The function calculates significance level of the PRCC sensitivity coefficients.
+#'
+#' @param gamma the PRCC coefficients
+#' @param N the number of samples
+#' @param p the number of discarded parameters
+#'
+#' @return data.frame with T-statistics value and Pvalue.
+significancePVal <- function(gamma,N, p ) {
+    T <- gamma * sqrt((N - 2 - p) / (1 - gamma ^ 2))
+    pval <- 2 * (1 - pt(abs(T), (N - 2 - p)))
+    return(data.frame(T = T, pval = pval))
+}
+
+pearsonPrime<-function(r){
+    rprime<- log(abs((1+r)/(1-r)))/2
+    return(rprime)
+}
+
+sigCompare<-function(r1,r2,N1,N2,p1,p2){
+    z<-(pearsonPrime(r1)-pearsonPrime(r2))/sqrt(1/(N1-3-p1)+1/(N2-3-p2))
+    pval<-2*(1 - pnorm(abs(z)))
+    res<-data.frame(r1=r1,r2=r2,z=z,pval=pval)
+    attr(res,'dims')<-c(N1=N1,N2=N2,p1=p1,p2=p2)
+}
+```
+
+# Sampling data
+## Read data
+```{r read.sampling}
+points<-read.csv('modules_sampling.csv')
+X<-points[,c(2:29)]
+Y<-points$EX_Y
+```
+
+## PRCC 
+```
+{r prcc.sampling}
+prcc500<-pcc(X,Y,rank = TRUE,nboot=500)
+ggplot(prcc500)
+```
+
+```
+{r prcc.sampling.sig}
+p<-(length(X)-1)
+N<-dim(X)[1]
+pvl<-significancePVal(prcc500$PRCC$original,N,p)
+sigBin<-cut(pvl$pval,c(-Inf,1e-3,1e-2,5e-2,1e-1,Inf))
+levels(sigBin)<-c('***','**','*','.',' ')
+pvl$names<-names(X)
+pvl$value<-prcc500$PRCC$original
+pvl$sig<-sigBin
+```
+The reaction system is shown on the following diagram:
+
+![module reaction diagram](saved_map_.png "Model diagram").
+
+```
+{r table.prcc.sampling}
+pander(pvl[,c('names','value','T','pval','sig')])
+```
+
+## ACE
+```
+{r ace.sampling}
+threshold1=0.01;threshold2=0.07;threshold3=0.08
+numOfBootSamp=100
+sampleSize=floor(length(X[,1])/2)
+H<-c()
+for(i in 1:dim(X)[2]){
+xc2<-data.frame(Y,X[,i])
+pp<-aceOfBootstrap(xc2,numOfBootSamp,sampleSize)
+H[i]<-var(pp$phi[,2])
+}
+cut(H,c(-Inf,threshold3,threshold2,threshold1,Inf))->Hbins
+names(Hbins)<-names(X)
+table(Hbins)
+```
+
+```
+{r plot.ace.sampling,fig.keep='all'}
+aceres<-ace(X,Y)
+for( i in 1:length(Hbins)){
+plot(aceres$x[i,],aceres$tx[,i],main=paste(names(X)[i],as.character(Hbins[i])))
+}
+
+```
+
+# Sobol data
+## Read data
+```{r read.sobol}
+points<-read.csv('sobol_res.csv')
+X<-points[,c(3:39)]
+Y<-points$Res
+```
+
+## PRCC 
+```{r prcc.sobol}
+#prcc500<-pcc(X,Y,rank = TRUE,nboot=500)
+prcc500<-readRDS('prcc_100K.rds')
+ggplot(prcc500)
+```
+
+```{r prcc.sobol.sig}
+p<-(length(X)-1)
+N<-dim(X)[1]
+pvl<-significancePVal(prcc500$PRCC$original,N,p)
+sigBin<-cut(pvl$pval,c(-Inf,1e-3,1e-2,5e-2,1e-1,Inf))
+levels(sigBin)<-c('***','**','*','.',' ')
+pvl$names<-names(X)
+pvl$value<-prcc500$PRCC$original
+pvl$sig<-sigBin
+```
+
+The reaction system is shown on the following diagram:
+
+![module reaction diagram](saved_map_.png "Model diagram").
+
+
+```{r table.prcc.sobol}
+pander(pvl[,c('names','value','T','pval','sig')])
+```
+
+```{r table.prcc.sobol.sig}
+pander(pvl[pvl$pval<0.01,c('names','value','pval','sig')])
+```
+
+### PRCC TDCC
+```{r read.ranks,fig.align='left',fig.width=6}
+ranks<-readRDS(file='prcc_ranks.rds')
+```
+
+#### TDCC 1K-10K
+```{r tdcc.1-10,fig.align='left',fig.width=6}
+r1<-ODEsensitivity::tdcc(t(ranks[,1:2]),pearson = TRUE,plot = TRUE)
+```
+
+#### TDCC 10K-20K
+```{r tdcc.10-20,fig.align='left',fig.width=6}
+r2<-ODEsensitivity::tdcc(t(ranks[,2:3]),pearson = TRUE,plot = TRUE)
+```
+
+#### TDCC 20K-30K
+```{r tdcc.20-30,fig.align='left',fig.width=6}
+r3<-ODEsensitivity::tdcc(t(ranks[,3:4]),pearson = TRUE,plot = TRUE)
+```
+
+#### TDCC 30K-40K
+```{r tdcc.30-40,fig.align='left',fig.width=6}
+r4<-ODEsensitivity::tdcc(t(ranks[,4:5]),pearson = TRUE,plot = TRUE)
+```
+
+#### TDCC 40K-50K
+```{r tdcc.40-50,fig.align='left',fig.width=6}
+r5<-ODEsensitivity::tdcc(t(ranks[,5:6]),pearson = TRUE,plot = TRUE)
+```
+
+#### TDCC 50K-60K
+```{r tdcc.50-60,fig.align='left',fig.width=6}
+r6<-ODEsensitivity::tdcc(t(ranks[,6:7]),pearson = TRUE,plot = TRUE)
+```
+
+#### TDCC 60K-70K
+```{r tdcc.60-70,fig.align='left',fig.width=6}
+r7<-ODEsensitivity::tdcc(t(ranks[,7:8]),pearson = TRUE,plot = TRUE)
+```
+
+#### TDCC 70K-80K
+```{r tdcc.70-80,fig.align='left',fig.width=6}
+r8<-ODEsensitivity::tdcc(t(ranks[,8:9]),pearson = TRUE,plot = TRUE)
+```
+
+#### TDCC 80K-90K
+```{r tdcc.80-90,fig.align='left',fig.width=6}
+r9<-ODEsensitivity::tdcc(t(ranks[,9:10]),pearson = TRUE,plot = TRUE)
+```
+
+#### TDCC 90K-100K
+```{r tdcc.90-100,fig.align='left',fig.width=6}
+r10<-ODEsensitivity::tdcc(t(ranks[,10:11]),pearson = TRUE,plot = TRUE)
+```
+
+#### PRCC TDCC dynamics
+```{r tdcc,fig.align='left',fig.width=6}
+tdcc<-as.data.frame(rbind(r1,r2,r3,r4,r5,r6,r7,r8,r9,r10))
+tdcc$size<-c(1000,10000*(1:9))
+qplot(size,pearson,data=tdcc)+geom_line()+xlab('size')+ylab('Consequtive TDCC')
+```
+
+
+## ACE
+```
+{r ace.sobol}
+threshold1=0.01;threshold2=0.07;threshold3=0.08
+numOfBootSamp=100
+sampleSize=floor(length(X[,1])/2)
+H<-c()
+for(i in 1:dim(X)[2]){
+xc2<-data.frame(Y,X[,i])
+pp<-aceOfBootstrap(xc2,numOfBootSamp,sampleSize)
+H[i]<-var(pp$phi[,2])
+}
+cut(H,c(-Inf,threshold3,threshold2,threshold1,Inf))->Hbins
+names(Hbins)<-names(X)
+table(Hbins)
+```
+
+```{r plot.ace.sobol,fig.keep='all'}
+aceres<-ace(X,Y)
+#for( i in 1:length(Hbins)){
+for(i in 1:dim(X)[2]){
+plot(aceres$x[i,],aceres$tx[,i],main=paste(names(X)[i]))#,as.character(Hbins[i])))
+}
+
+```
+
+
+# Appendix {.tabset}
+## Functions
+```{r functions, eval=FALSE, include=TRUE}
+```
+
+## Setup R
+```{r setup, eval=FALSE}
+```
+
+## Versions
+### Document version
+```{r docVersion, echo=FALSE, results='asis', cache=FALSE}
+cat(params$version)
+```
+
+### Session Info
+```{r sessionInfo, echo=FALSE, results='asis', class='text', warning=FALSE}
+si<-devtools::session_info()
+cat('Platform\n\n')
+pander::pander(si$platform)
+cat('Packages\n\n')
+knitr::kable(as.data.frame(si$packages)[,c('ondiskversion','loadedversion','date','source')],align = c('l','l'))
+```
+

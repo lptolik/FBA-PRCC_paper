@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2" sboTerm="SBO:0000624" level="3" version="1" fbc:required="false">
+  <model metaid="meta_modules" id="modules" fbc:strict="true">
+    <listOfUnitDefinitions>
+      <unitDefinition id="mmol_per_gDW_per_hr">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-3" multiplier="1"/>
+          <unit kind="gram" exponent="-1" scale="0" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="0" multiplier="3600"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="c" constant="true"/>
+      <compartment id="e" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="M_A" name="A" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 10.264793909312901}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_B" name="B" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 10.264793909312907}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_C" name="C" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 0.0}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_D" name="D" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 10.264793909312914}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_E" name="E" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 0.0}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_F" name="F" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 0.0}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_G" name="G" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 10.264793909312914}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_H" name="H" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 10.264793909312914}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_I" name="I" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 10.264793909312907}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_J" name="J" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 10.264793909312907}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_K" name="K" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 5.983062801858296}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_L" name="L" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 5.983062801858296}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_M" name="M" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 4.281731107454618}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_N" name="N" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 4.281731107454615}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_O" name="O" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 0.0}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_P" name="P" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 0.0}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_Q" name="Q" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 10.26479390931291}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_R" name="R" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 12.145225376221216}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_S" name="S" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 12.145225376221216}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_T" name="T" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 0.0}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_U" name="U" compartment="c" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 0.0}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_X" name="X" compartment="e" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 10.264793909312901}</p>
+          </html>
+        </notes>
+      </species>
+      <species id="M_Y" name="Y" compartment="e" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <notes>
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <p>map_info: {&apos;display_name&apos;: &apos;&apos;, &apos;flux&apos;: 10.264793909312914}</p>
+          </html>
+        </notes>
+      </species>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter sboTerm="SBO:0000626" id="cobra_default_lb" value="-1000" constant="true"/>
+      <parameter sboTerm="SBO:0000626" id="cobra_default_ub" value="1000" constant="true"/>
+      <parameter sboTerm="SBO:0000626" id="cobra_0_bound" value="0" constant="true"/>
+      <parameter sboTerm="SBO:0000626" id="minus_inf" value="-INF" constant="true"/>
+      <parameter sboTerm="SBO:0000626" id="plus_inf" value="INF" constant="true"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction id="R_R0" name="R0" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub"/>
+      <reaction id="R_R1" name="R1" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_X" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_A" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R2" name="R2" reversible="true" fast="false" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_A" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_B" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R3" name="R3" reversible="true" fast="false" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_A" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_C" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R4" name="R4" reversible="true" fast="false" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_B" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_C" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R5" name="R5" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_B" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_D" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R6" name="R6" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_D" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_E" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R7" name="R7" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_E" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_F" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R8" name="R8" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_F" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_I" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R9" name="R9" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_D" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_G" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R10" name="R10" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_G" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_H" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R11" name="R11" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_H" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_I" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R12" name="R12" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_I" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_J" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R13" name="R13" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_J" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_K" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R14" name="R14" reversible="true" fast="false" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_K" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_L" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R15" name="R15" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_L" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_Q" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R16" name="R16" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_J" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_M" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R17" name="R17" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_M" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_N" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R18" name="R18" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_N" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_Q" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R19" name="R19" reversible="true" fast="false" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_K" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_O" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R20" name="R20" reversible="true" fast="false" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_O" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_P" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R21" name="R21" reversible="true" fast="false" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_P" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_L" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R22" name="R22" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_Q" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_R" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R23" name="R23" reversible="true" fast="false" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_R" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_S" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R24" name="R24" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_R" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_S" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R25" name="R25" reversible="true" fast="false" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_A" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_T" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_U" stoichiometry="1" constant="true"/>
+          <speciesReference species="M_S" stoichiometry="0.5" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_R26" name="R26" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_S" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="M_Y" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_EX_X" name="EX_X" reversible="true" fast="false" fbc:lowerFluxBound="cobra_default_lb" fbc:upperFluxBound="cobra_default_ub">
+        <listOfProducts>
+          <speciesReference species="M_X" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="R_EX_Y" name="EX_Y" reversible="false" fast="false" fbc:lowerFluxBound="cobra_0_bound" fbc:upperFluxBound="cobra_default_ub">
+        <listOfReactants>
+          <speciesReference species="M_Y" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+      </reaction>
+    </listOfReactions>
+    <fbc:listOfObjectives fbc:activeObjective="obj">
+      <fbc:objective fbc:id="obj" fbc:type="maximize">
+        <fbc:listOfFluxObjectives>
+          <fbc:fluxObjective fbc:reaction="R_EX_Y" fbc:coefficient="1"/>
+        </fbc:listOfFluxObjectives>
+      </fbc:objective>
+    </fbc:listOfObjectives>
+  </model>
+</sbml>

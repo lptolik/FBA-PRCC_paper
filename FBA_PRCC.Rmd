@@ -1,0 +1,203 @@
+---
+title: "FBA Sensitivity Analysis"
+author: "A. Sorokin"
+date: '`r format(Sys.time(), "%d.%m.%Y")`'
+output:
+  pdf_document:
+    keep_tex: yes
+    number_sections: yes
+  html_document: default
+params:
+  format: !r if(opts_knit$get("rmarkdown.pandoc.to") == 'html') c('screen', 'print')
+    else 'print'
+header-includes:
+- \usepackage[T2A]{fontenc}
+- \usepackage[utf8]{inputenc}
+- \usepackage[english,russian]{babel}
+- \usepackage{grffile}
+- \usepackage{rotating}
+- \usepackage{caption}
+- \usepackage{longtable}
+- \usepackage{lscape}
+---
+```{r loadPackages, include=FALSE, cache=FALSE}
+## load additional packages in this chunk
+library(pander)
+library(knitr)
+library(data.table)
+library(ggplot2)
+library(xtable)
+library(tidyr)
+library(dplyr)
+library(openxlsx)
+library(sensitivity)
+bdir<-'/Volumes/bucket/GoryaninU/FBA_sensitivity'
+```
+
+```{r setup, include=FALSE, cache=FALSE}
+## This chunk should contain global configuration commands.
+## Use this to set knitr options and related things. Everything
+## in this chunk will be included in an appendix to document the
+## configuration used.
+#output <- opts_knit$get("rmarkdown.pandoc.to")
+knitr::opts_knit$set(stop_on_error = 2L)
+
+## By default R code is only included in HTML versions of the report
+## (where it can be collapsed). You can generate a PDF version
+## using rmarkdown::pdf_document to get a copy for print. Extensive
+## chunks of R code may or may not be desired in /hat setting. If you
+## want them simply change the following arguments to `echo = TRUE`.
+## In either case the default can be overwritten for individual chunks.
+#opts_chunk$set(echo = output=="html")
+#opts_chunk$set(warning = output=="html")
+#opts_chunk$set(message = output=="html")
+
+## Cache options
+knitr::opts_chunk$set(cache=TRUE,warning=FALSE)
+
+## Figure options
+## Set default figure format
+#options(reportmd.figure.format=params$format)
+
+## Set 'hide.fig.code' to FALSE to include code chunks that
+## produce Figures in the output. Note that this affects all chunks
+## that provide a figure caption.
+knitr::opts_chunk$set(hold=TRUE, hide.fig.code=FALSE)
+
+## Set up default plotting options for different formats.
+## These can be overwritten for individual chunks
+#interactiveFig()
+#screenFig()
+#printFig()
+
+## Pander options
+pander::panderOptions("digits", 3)
+pander::panderOptions("table.split.table", 160)
+#panderOptions("table.style", "grid")
+
+## Configure Figure and Table lables
+#options(figcap.prefix = "Figure", figcap.sep = ":", figcap.prefix.highlight = "**")
+#options(tabcap.prefix = "Table", tabcap.sep = ":", tabcap.prefix.highlight = "**")
+
+## Install required knitr hooks
+#installHooks()
+```
+
+```{r functions, include=FALSE}
+## Custom functions used in the analysis should go into this chunk.
+## They will be listed in their own section of the appendix.
+
+##==================== Functions ====================##
+
+```
+
+# Read data
+## Read PRCC results
+Find all CSV data in `r bdir` and process them:
+```{r read.bfiles}
+fl<-dir(bdir,pattern='sobol_data_len11.*.csv')
+nums<-as.numeric(sub('sobol_data_len11_40_([0-9]+).csv','\\1',fl))
+```
+There are datasets for `r 8192*nums` random points.
+
+```{r prepare.bdata}
+fl<-fl[order(nums)]
+ranks<-matrix(NA,ncol = length(unique(nums)),nrow = 3730)
+i<-1
+ for(f in fl){
+ df<-read.csv(file.path(bdir,f),sep='\t')
+ df<-df[order(df$varnum),]
+ cat(f,dim(df),'\n')
+ ranks[,i]<-rank(-abs(df$original),ties.method= "first")
+ i<-i+1
+ }
+```
+
+```{r plot.tdcc}
+r1<-ODEsensitivity::tdcc(t(ranks[,(length(nums)-1:0)]),pearson = TRUE,plot = TRUE)
+r1
+```
+
+## Lysine analysis
+```{r read.lfiles,echo=FALSE}
+dist<-read.csv('/Users/anatolii-sorokin/Dropbox/Projects/FBA_sensitivity/ecoli_sobol.csv')
+dist$from_EX_lys__L_e[dist$from_EX_lys__L_e=='∞']<-NA
+dist$from_EX_lys__L_e<-as.numeric(dist$from_EX_lys__L_e)
+dist$to_EX_lys__L_e[dist$to_EX_lys__L_e=='∞']<-NA
+dist$to_EX_lys__L_e<-as.numeric(dist$to_EX_lys__L_e)
+dist$undir_EX_lys__L_e[dist$undir_EX_lys__L_e=='∞']<-NA
+dist$undir_EX_lys__L_e<-as.numeric(dist$undir_EX_lys__L_e)
+reiDF<-sub('^(.+)_.','\\1',df$varname)
+idx<-match(reiDF,dist$ID)
+df$gdist[!is.na(idx)]<-dist$undir_EX_lys__L_e[idx[!is.na(idx)]]/2
+df$ID[!is.na(idx)]<-dist$ID[idx[!is.na(idx)]]
+df$Name[!is.na(idx)]<-dist$Name[idx[!is.na(idx)]]
+df$Equation[!is.na(idx)]<-dist$Equation[idx[!is.na(idx)]]
+df$ExEquation[!is.na(idx)]<-dist$ExEquation[idx[!is.na(idx)]]
+df$kegg.reaction[!is.na(idx)]<-dist$kegg.reaction[idx[!is.na(idx)]]
+df$ec.code[!is.na(idx)]<-dist$ec.code[idx[!is.na(idx)]]
+df$Reduced.Cost[!is.na(idx)]<-dist$Reduced.Cost[idx[!is.na(idx)]]
+df$Flux[!is.na(idx)]<-dist$Flux[idx[!is.na(idx)]]
+```
+
+```{r pander.df1p}
+df001<-df[df$pval<0.01,]
+row.names(df001)<-df001$varname
+pander(df001[order(df001$original),c("original","gdist","pval","ID")],
+       justify = c('left', 'center', 'center', 'center', 'left'))
+```
+```{r pander1.df1p}
+pander(df001[order(df001$original),c("original","gdist","Name")],
+       justify = c('left', 'center', 'center', 'left'))
+```
+```{r pander2.df1p}
+pander(df001[order(df001$original),c("original","gdist","Equation")],
+       justify = c('left', 'center', 'center', 'left'))
+```
+
+```{r prepare.ldata}
+qplot(original,gdist,data=df001)+xlab('PRCC')+ylab('Network distance')
+```
+
+
+```{r pander.df{p}
+df005<-df[df$pval<0.05,]
+row.names(df005)<-df005$varname
+pander(df005[order(df005$original),c("original","gdist","pval","ID")],
+       justify = c('left', 'center', 'center', 'center', 'left'))
+```
+```{r pander1.df5p}
+pander(df005[order(df005$original),c("original","gdist","Name")],
+       justify = c('left', 'center', 'center', 'left'))
+```
+```{r pander2.df5p}
+pander(df005[order(df005$original),c("original","gdist","Equation")],
+       justify = c('left', 'center', 'center', 'left'))
+```
+
+
+
+# Appendix {.tabset}
+## Functions
+```{r functions, eval=FALSE, include=TRUE}
+```
+
+## Setup R
+```{r setup, eval=FALSE}
+```
+
+## Versions
+### Document version
+```{r docVersion, echo=FALSE, results='asis', cache=FALSE}
+cat(params$version)
+```
+
+### Session Info
+```{r sessionInfo, echo=FALSE, results='asis', class='text', warning=FALSE}
+si<-devtools::session_info()
+cat('Platform\n\n')
+pander::pander(si$platform)
+cat('Packages\n\n')
+knitr::kable(as.data.frame(si$packages)[,c('ondiskversion','loadedversion','date','source')],align = c('l','l'))
+```
+
